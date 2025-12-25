@@ -19,6 +19,7 @@ class PostSerializer(serializers.ModelSerializer):
     author_nickname = serializers.CharField(source='author.nickname', read_only=True)
     comments_count = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
+    store_name = serializers.CharField(source='store.name', read_only=True)
 
     class Meta:
         model = Post
@@ -30,13 +31,15 @@ class PostSerializer(serializers.ModelSerializer):
             'content',
             'category',
             'image',  # 🚨 [수정] photo_url -> image
+            'store',  # ✅ [추가] 빵집 연결 필드
+            'store_name',  # ✅ [추가] 빵집 이름 (read-only)
             'created_at',
             'updated_at',
             'like_users',
             'comments_count',
             'like_count',
         ]
-        read_only_fields = ['author', 'like_users']
+        read_only_fields = ['author', 'like_users', 'store_name']
 
     def get_comments_count(self, obj):
         return obj.comments.filter(parent__isnull=True).count()

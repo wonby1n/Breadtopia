@@ -66,13 +66,13 @@ const fetchUserProfile = async () => {
     const bookmarkedStores = data.bookmarked_stores || [];
     const badges = data.badges || [];
     const tasteStats = data.taste_stats || {};
-    
+
     // 방문 데이터 가공
     const visitedStores = (data.visited_stores || []).map(store => ({
       id: store.id,
       name: store.name,
       category: store.category || '빵집',
-      location: store.location || '',
+      location: store.address || '',
       date: store.visited_date || new Date().toISOString().split('T')[0] // 실제 방문 날짜가 있다면 사용
     }));
 

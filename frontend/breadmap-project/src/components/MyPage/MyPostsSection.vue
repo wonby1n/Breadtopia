@@ -51,16 +51,25 @@ const goToPost = (id) => {
 };
 
 const getCategoryLabel = (category) => {
+  // 백엔드에서 보내는 실제 카테고리 값에 맞춤
   const labels = {
-    'tip': '꿀팁',
-    'recommend': '추천',
-    'chatter': '잡담'
+    '빵 꿀팁': '꿀팁 🍯',
+    '빵집 추천': '추천 🥐',
+    '빵 주저리': '주저리 💬',
+    // 영문 카테고리도 지원 (하위 호환성)
+    'tip': '꿀팁 🍯',
+    'recommend': '추천 🥐',
+    'chatter': '주저리 💬'
   };
   return labels[category] || category;
 };
 
 const getCategoryStyle = (category) => {
   const styles = {
+    '빵 꿀팁': 'bg-blue-100 text-blue-700',
+    '빵집 추천': 'bg-green-100 text-green-700',
+    '빵 주저리': 'bg-purple-100 text-purple-700',
+    // 영문 카테고리도 지원
     'tip': 'bg-blue-100 text-blue-700',
     'recommend': 'bg-green-100 text-green-700',
     'chatter': 'bg-purple-100 text-purple-700'

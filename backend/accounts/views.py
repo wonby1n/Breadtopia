@@ -82,12 +82,30 @@ class UserProfileView(APIView):
         try:
             user = request.user
 
-            # 1. 📜 스탬프 데이터: 내가 리뷰를 남긴 가게들 (중복 제거)
-            # Store 모델과 연결된 reviews 역참조 활용
+            # 1. 📜 스탬프 데이터: 내가 리뷰를 남긴 가게들 + 빵집 추천 게시글을 쓴 가게들 (중복 제거)
             try:
-                visited_stores = Store.objects.filter(reviews__user=user).distinct().values('id', 'name', 'category')
+                from django.db.models import Max, Q
+                from community.models import Post
+
+                # Review를 통해 방문한 가게 + Post를 통해 방문한 가게를 합침
+                visited_stores_qs = Store.objects.filter(
+                    Q(reviews__user=user) | Q(community_posts__author=user)
+                ).distinct().annotate(
+                    # Review 또는 Post 중 가장 최근 날짜를 visited_date로 사용
+                    visited_date=Max('reviews__created_at')
+                ).values('id', 'name', 'category', 'address', 'visited_date')
+
+                # datetime 객체를 ISO 문자열로 변환
+                visited_stores = []
+                for store in visited_stores_qs:
+                    store_data = dict(store)
+                    if store_data.get('visited_date'):
+                        store_data['visited_date'] = store_data['visited_date'].isoformat()
+                    visited_stores.append(store_data)
             except Exception as e:
                 print(f"visited_stores 에러: {e}")
+                import traceback
+                traceback.print_exc()
                 visited_stores = []
 
             # 1-2. 📌 북마크한 빵집 목록
@@ -150,11 +168,13 @@ class UserProfileView(APIView):
             # 6. 최근 데이터 조회
             try:
                 # 리뷰 데이터에 store 이름 포함 (select_related로 조인)
-                user_reviews = list(
-                    user.review_set.select_related('store')
-                    .all()
-                    .values('id', 'content', 'rating', 'created_at', 'store__name')
-                )
+                user_reviews_qs = user.review_set.select_related('store').all().values('id', 'content', 'rating', 'created_at', 'store__name')
+                user_reviews = []
+                for review in user_reviews_qs:
+                    review_data = dict(review)
+                    if review_data.get('created_at'):
+                        review_data['created_at'] = review_data['created_at'].isoformat()
+                    user_reviews.append(review_data)
             except Exception as e:
                 print(f"user_reviews 에러: {e}")
                 user_reviews = []
@@ -162,14 +182,26 @@ class UserProfileView(APIView):
             try:
                 from community.models import Post
                 # 전체 게시글 가져오기
-                user_posts = list(Post.objects.filter(author=user).values('id', 'title', 'category', 'created_at'))
+                user_posts_qs = Post.objects.filter(author=user).values('id', 'title', 'category', 'created_at')
+                user_posts = []
+                for post in user_posts_qs:
+                    post_data = dict(post)
+                    if post_data.get('created_at'):
+                        post_data['created_at'] = post_data['created_at'].isoformat()
+                    user_posts.append(post_data)
             except Exception as e:
                 print(f"user_posts 에러: {e}")
                 user_posts = []
 
             try:
                 from reviews.models import Comment
-                user_comments = list(Comment.objects.filter(user=user)[:3].values('id', 'content', 'created_at'))
+                user_comments_qs = Comment.objects.filter(user=user)[:3].values('id', 'content', 'created_at')
+                user_comments = []
+                for comment in user_comments_qs:
+                    comment_data = dict(comment)
+                    if comment_data.get('created_at'):
+                        comment_data['created_at'] = comment_data['created_at'].isoformat()
+                    user_comments.append(comment_data)
             except Exception as e:
                 print(f"user_comments 에러: {e}")
                 user_comments = []

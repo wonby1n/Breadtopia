@@ -60,13 +60,16 @@ const handleSubmit = async () => {
     }
     
     // API 요청 (헤더에 토큰 포함)
-    await apiClient.post('/community/create/', formData, { 
-      headers: { 
+    await apiClient.post('/community/create/', formData, {
+      headers: {
         'Authorization': `Token ${authStore.token}`,
         // multipart/form-data는 axios가 자동으로 설정하므로 생략
-      } 
+      }
     })
-    
+
+    // ✅ 경험치 획득으로 인한 레벨업 체크를 위해 사용자 정보 갱신
+    await authStore.fetchUser()
+
     alert('꿀팁이 등록되었습니다! 🍯')
     router.push({ name: 'community' })
 

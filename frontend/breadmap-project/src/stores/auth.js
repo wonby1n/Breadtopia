@@ -7,7 +7,11 @@ export const useAuthStore = defineStore('auth', () => {
   // --- State ---
   const token = ref(localStorage.getItem('auth_token') || null);
   const user = ref(JSON.parse(localStorage.getItem('user_info')) || null);
-  
+
+  // ✅ [추가] 레벨업 상태 관리
+  const levelUpInfo = ref(null);
+  const showLevelUpModal = ref(false);
+
   // --- Router ---
   // 컴포넌트가 아닌 곳에서 router를 사용하기 위해 setup 스코프 밖에서 선언
   let router;
@@ -25,8 +29,51 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function setUser(newUser) {
+    // ✅ [추가] 레벨업 감지
+    const oldLevel = user.value?.level;
+    const newLevel = newUser?.level;
+
+    if (oldLevel && newLevel && newLevel > oldLevel) {
+      // 레벨업 발생!
+      triggerLevelUp(oldLevel, newLevel, newUser);
+    }
+
     user.value = newUser;
     localStorage.setItem('user_info', JSON.stringify(newUser));
+  }
+
+  // ✅ [추가] 레벨업 트리거 함수
+  function triggerLevelUp(oldLevel, newLevel, userData) {
+    levelUpInfo.value = {
+      oldLevel,
+      newLevel,
+      character: getLevelCharacter(newLevel),
+      userData
+    };
+    showLevelUpModal.value = true;
+  }
+
+  // ✅ [추가] 레벨별 캐릭터 정보
+  function getLevelCharacter(level) {
+    const LEVEL_CONFIG = {
+      1: { name: '아기빵쥐', icon: '🐭', color: 'text-gray-400', img: 'https://cdn-icons-png.flaticon.com/512/235/235394.png' },
+      2: { name: '식빵햄찌', icon: '🐹', color: 'text-orange-300', img: 'https://cdn-icons-png.flaticon.com/512/235/235394.png' },
+      3: { name: '호빵토끼', icon: '🐰', color: 'text-pink-300', img: 'https://cdn-icons-png.flaticon.com/512/235/235372.png' },
+      4: { name: '모닝코기', icon: '🐶', color: 'text-yellow-500', img: 'https://cdn-icons-png.flaticon.com/512/235/235415.png' },
+      5: { name: '크루아상여우', icon: '🦊', color: 'text-orange-500', img: 'https://cdn-icons-png.flaticon.com/512/235/235368.png' },
+      6: { name: '브리오슈곰', icon: '🐻', color: 'text-brown-500', img: 'https://cdn-icons-png.flaticon.com/512/235/235388.png' },
+      7: { name: '사워도우울프', icon: '🐺', color: 'text-gray-600', img: 'https://cdn-icons-png.flaticon.com/512/235/235356.png' },
+      8: { name: '초코표범', icon: '🐆', color: 'text-yellow-700', img: 'https://cdn-icons-png.flaticon.com/512/235/235377.png' },
+      9: { name: '바게트호크', icon: '🦅', color: 'text-teal-700', img: 'https://cdn-icons-png.flaticon.com/512/235/235386.png' },
+      10: { name: '황금밀 유니콘', icon: '🦄', color: 'text-purple-500', img: 'https://cdn-icons-png.flaticon.com/512/235/235359.png' }
+    };
+    return LEVEL_CONFIG[level] || LEVEL_CONFIG[1];
+  }
+
+  // ✅ [추가] 레벨업 모달 닫기
+  function closeLevelUpModal() {
+    showLevelUpModal.value = false;
+    levelUpInfo.value = null;
   }
 
   function clearAuth() {
@@ -88,15 +135,19 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUser();
   }
 
-  return { 
-    token, 
-    user, 
-    isAuthenticated, 
-    currentUser, 
-    login, 
-    logout, 
-    signup, 
+  return {
+    token,
+    user,
+    isAuthenticated,
+    currentUser,
+    login,
+    logout,
+    signup,
     fetchUser,
-    setRouter 
+    setRouter,
+    // ✅ [추가] 레벨업 관련
+    levelUpInfo,
+    showLevelUpModal,
+    closeLevelUpModal
   };
 });

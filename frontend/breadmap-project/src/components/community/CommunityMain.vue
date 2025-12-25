@@ -177,12 +177,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import apiClient from '@/api/axios'
 import DetailCard from '@/components/community/DetailCard.vue'
 import ChatterList from '@/components/community/ChatterList.vue'
 import RecommendList from '@/components/community/RecommendList.vue'
 import TipList from '@/components/community/TipList.vue'
 import HotList from '@/components/community/HotList.vue'
+
+const route = useRoute()
+const router = useRouter()
 
 const categories = [
   { value: 'hot', label: 'HOT 🔥' },
@@ -196,13 +201,54 @@ const selectedPost = ref(null)
 const isCommentsOpen = ref(false)
 const newComment = ref('')
 
+// ✅ URL 파라미터로 post ID가 전달되면 해당 게시글 로드
+const loadPostById = async (postId) => {
+  if (!postId) return
+
+  try {
+    const response = await apiClient.get(`/community/${postId}/`)
+    selectedPost.value = response.data
+
+    // 카테고리도 자동 선택
+    const categoryMap = {
+      '빵 주저리': 'chatter',
+      '빵집 추천': 'recommend',
+      '빵 꿀팁': 'tip'
+    }
+    if (response.data.category && categoryMap[response.data.category]) {
+      selectedCategory.value = categoryMap[response.data.category]
+    }
+  } catch (error) {
+    console.error('게시글 로드 실패:', error)
+    alert('게시글을 불러올 수 없습니다.')
+    router.push({ name: 'community' })
+  }
+}
+
+// ✅ URL 파라미터 변경 감지
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadPostById(newId)
+  } else {
+    selectedPost.value = null
+  }
+})
+
 const width = ref(window.innerWidth)
 const onResize = () => {
   width.value = window.innerWidth
 }
+
+// ✅ 컴포넌트 마운트 시 초기화
 onMounted(() => {
   window.addEventListener('resize', onResize)
+
+  // URL 파라미터로 post ID가 있으면 해당 게시글 로드
+  if (route.params.id) {
+    loadPostById(route.params.id)
+  }
 })
+
 onUnmounted(() => window.removeEventListener('resize', onResize))
 const isMobile = computed(() => width.value < 1024)
 

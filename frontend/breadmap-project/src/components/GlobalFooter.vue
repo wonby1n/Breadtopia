@@ -11,7 +11,7 @@
               class="w-10 h-10 object-contain transition-transform duration-500 group-hover:rotate-12"
             />
             <h2 class="text-3xl font-bold text-[#6B4A38]">Breadtopia</h2>
-          </div>
+          </div> 
 
           <p class="text-[#8B6A55] text-base leading-relaxed max-w-sm">
             전국 빵순이 빵돌이를 위한<br />

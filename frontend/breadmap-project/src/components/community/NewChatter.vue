@@ -59,12 +59,15 @@ const handleSubmit = async () => {
     // 디버깅용
     console.log('전송 데이터:', { title: title.value, category: categoryValue, hasImage: !!imageFile.value })
 
-    await apiClient.post('/community/create/', formData, { 
-      headers: { 
-        'Authorization': `Token ${authStore.token}` 
-      } 
+    await apiClient.post('/community/create/', formData, {
+      headers: {
+        'Authorization': `Token ${authStore.token}`
+      }
     })
-    
+
+    // ✅ 경험치 획득으로 인한 레벨업 체크를 위해 사용자 정보 갱신
+    await authStore.fetchUser()
+
     alert('이야기가 등록되었습니다! 🥐')
     router.push({ name: 'community' })
 

@@ -11,6 +11,16 @@ class Post(models.Model):
     # photo_url = models.URLField(max_length=500, blank=True, null=True)
     image = models.ImageField(upload_to='community/images/%Y/%m/%d/', blank=True, null=True)
 
+    # ✅ [추가] 빵집 추천 카테고리를 위한 store 필드
+    store = models.ForeignKey(
+        'stores.Store',
+        on_delete=models.CASCADE,
+        related_name='community_posts',
+        null=True,
+        blank=True,
+        help_text='빵집 추천 카테고리일 경우 연결된 빵집'
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)

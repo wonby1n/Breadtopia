@@ -92,6 +92,11 @@ const routes = [
     component: CommunityMain
   },
   {
+    path: '/community/:id',
+    name: 'community-detail',
+    component: CommunityMain
+  },
+  {
     path: '/community/chatter/new',
     name: 'newChatter',
     component: NewChatter

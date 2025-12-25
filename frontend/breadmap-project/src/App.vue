@@ -2,13 +2,20 @@
   <div id="app" class="min-h-screen flex flex-col">
     <!-- ✅ meta.hideNavbar가 true가 아닐 때만 헤더 표시 -->
     <GlobalHeader v-if="!$route.meta.hideNavbar" />
-    
+
     <main class="flex-grow">
       <router-view />
     </main>
     <BakeryChatbot />
     <!-- ✅ 지도 화면에서는 보통 푸터도 안 보이게 설정합니다 (필요하면 v-if 제거하세요) -->
     <GlobalFooter v-if="!$route.meta.hideNavbar" />
+
+    <!-- ✅ 전역 레벨업 모달 -->
+    <LevelUpModal
+      :show="authStore.showLevelUpModal"
+      :levelInfo="authStore.levelUpInfo"
+      @close="authStore.closeLevelUpModal"
+    />
   </div>
 </template>
 
@@ -16,8 +23,11 @@
 import { RouterView } from 'vue-router'
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalFooter from '@/components/GlobalFooter.vue'
-import BakeryChatbot from '@/components/common/BakeryChatbot.vue';
+import BakeryChatbot from '@/components/common/BakeryChatbot.vue'
+import LevelUpModal from '@/components/LevelUpModal.vue'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 </script>
 
 <style>

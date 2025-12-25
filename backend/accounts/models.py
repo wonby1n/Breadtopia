@@ -46,15 +46,15 @@ class User(AbstractUser):
     # --- 📈 레벨 데이터 정의 (상수) ---
     LEVEL_SYSTEM = {
         1: {'title': '아기빵쥐', 'threshold': 0, 'next_exp': 100},
-        2: {'title': '식빵햄찌', 'threshold': 100, 'next_exp': 300},
-        3: {'title': '호빵토끼', 'threshold': 300, 'next_exp': 600},
-        4: {'title': '모닝코기', 'threshold': 600, 'next_exp': 1000},
-        5: {'title': '크루아상여우', 'threshold': 1000, 'next_exp': 1500},
-        6: {'title': '브리오슈곰', 'threshold': 1500, 'next_exp': 2200},
-        7: {'title': '사워도우울프', 'threshold': 2200, 'next_exp': 3000},
-        8: {'title': '초코표범', 'threshold': 3000, 'next_exp': 4000},
-        9: {'title': '바게트호크', 'threshold': 4000, 'next_exp': 5500},
-        10: {'title': '황금밀 유니콘', 'threshold': 5500, 'next_exp': 999999},
+        2: {'title': '식빵햄찌', 'threshold': 100, 'next_exp': 200},
+        3: {'title': '호빵토끼', 'threshold': 200, 'next_exp': 300},
+        4: {'title': '모닝코기', 'threshold': 300, 'next_exp': 400},
+        5: {'title': '크루아상여우', 'threshold': 400, 'next_exp': 500},
+        6: {'title': '브리오슈곰', 'threshold': 500, 'next_exp': 700},
+        7: {'title': '사워도우울프', 'threshold': 700, 'next_exp': 800},
+        8: {'title': '초코표범', 'threshold': 800, 'next_exp': 1000},
+        9: {'title': '바게트호크', 'threshold': 1000, 'next_exp': 1500},
+        10: {'title': '황금밀 유니콘', 'threshold': 1500, 'next_exp': 999999},
     }
 
     def __str__(self):

@@ -9,8 +9,11 @@ urlpatterns = [
     # 내가 작성한 게시글 목록
     path('my/', views.my_posts, name='my_posts'),
 
-    # 게시글 삭제
-    path('<int:post_id>/', views.post_delete, name='post_delete'),
+    # ✅ [수정] 게시글 상세 조회 (GET) - pk로 변경
+    path('<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
+
+    # 게시글 삭제 (DELETE)
+    path('<int:post_id>/delete/', views.post_delete, name='post_delete'),
 
     # 게시글 좋아요
     path('<int:post_id>/like/', views.post_like, name='post_like'),
