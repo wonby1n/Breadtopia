@@ -48,17 +48,42 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  ///////////////////////////////
+
   async function signup(userInfo) {
     try {
-      const response = await apiClient.post('/accounts/signup/', userInfo);
-      setToken(response.data.key);
-      await fetchUser();
-      if (router) router.push('/');
+      // 백엔드가 기대하는 필드 형태로 재구성
+      const payload = {
+        email: userInfo.email,
+        password1: userInfo.password1,
+        password2: userInfo.password2,
+        // username을 쓰는 설정이면 아래도 포함
+        nickname: userInfo.nickname, 
+        bread_preferences: userInfo.bread_preferences, // 문자열로 받는다면 그대로
+
+      }
+
+      console.log('📨 Signup payload:', payload)
+
+      const response = await apiClient.post('/accounts/signup/', payload)
+
+      console.log('✅ Signup success:', response.data)
+
+      setToken(response.data.key)
+      await fetchUser()
+      if (router) router.push('/')
     } catch (error) {
-      console.error('Signup failed:', error);
-      alert('회원가입에 실패했습니다. 입력 정보를 확인하세요.');
+      if (error.response) {
+        console.error('❌ Signup 400 data:', error.response.data)
+        alert('회원가입에 실패했습니다: ' + JSON.stringify(error.response.data))
+      } else {
+        console.error('❌ Signup failed:', error)
+        alert('회원가입 중 네트워크 오류가 발생했습니다.')
+      }
     }
   }
+
+  //////////////////////////////////////////////
 
   async function logout() {
     if (!token.value) return;

@@ -63,7 +63,7 @@ const step = ref(1);
 const form = reactive({
   email: '',
   nickname: '',
-  password: '',
+  password1: '',
   password2: '',
   bread_preferences: [],
 });

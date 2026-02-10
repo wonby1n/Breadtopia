@@ -74,6 +74,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 
 REST_FRAMEWORK = {
@@ -176,8 +178,19 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # allauth 설정 (이메일 인증 등 서비스 정책에 맞게 조절 가능)
-ACCOUNT_AUTHENTICATION_METHOD = 'email' # 이메일로 인증
-ACCOUNT_EMAIL_REQUIRED = True           # 이메일 필드 필수
-ACCOUNT_USERNAME_REQUIRED = False       # username 필드 필수 아님
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드를 사용하지 않음
+# ACCOUNT_AUTHENTICATION_METHOD = 'email' # 이메일로 인증
+# ACCOUNT_EMAIL_REQUIRED = True           # 이메일 필드 필수
+
+########### 기존 makemigrations 시 뜨는 경고 메시지 수정용 ################
+# ACCOUNT_USERNAME_REQUIRED = False       # username 필드 필수 아님
+
+# 이메일 로그인만 허용
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# 회원가입에 필요한 필드 정의
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+
+########### 기존 makemigrations 시 뜨는 경고 메시지 수정용 ################
+
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드를 사용하지 않음
 ACCOUNT_EMAIL_VERIFICATION = 'none'     # 테스트 시 'none', 운영 시 'mandatory'
